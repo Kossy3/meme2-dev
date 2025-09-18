@@ -1,6 +1,5 @@
 import { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
-import StartGame from './game/main';
-import { EventBus } from './game/EventBus';
+import StartGame from './main';
 
 export interface IRefPhaserGame
 {
@@ -10,12 +9,12 @@ export interface IRefPhaserGame
 
 interface IProps
 {
-    currentActiveScene?: (scene_instance: Phaser.Scene) => void
 }
 
-export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(function PhaserGame({ currentActiveScene }, ref)
+export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(function PhaserGame({}, ref)
 {
     const game = useRef<Phaser.Game | null>(null!);
+    const key = import.meta.hot ? Date.now() : "static-key";
 
     useLayoutEffect(() =>
     {
@@ -45,33 +44,7 @@ export const PhaserGame = forwardRef<IRefPhaserGame, IProps>(function PhaserGame
                 }
             }
         }
-    }, [ref]);
-
-    useEffect(() =>
-    {
-        EventBus.on('current-scene-ready', (scene_instance: Phaser.Scene) =>
-        {
-            if (currentActiveScene && typeof currentActiveScene === 'function')
-            {
-
-                currentActiveScene(scene_instance);
-
-            }
-
-            if (typeof ref === 'function')
-            {
-                ref({ game: game.current, scene: scene_instance });
-            } else if (ref)
-            {
-                ref.current = { game: game.current, scene: scene_instance };
-            }
-            
-        });
-        return () =>
-        {
-            EventBus.removeListener('current-scene-ready');
-        }
-    }, [currentActiveScene, ref]);
+    }, [ref, key]);
 
     return (
         <div id="game-container"></div>

@@ -1,6 +1,6 @@
 import { GameObjects, Scene } from 'phaser';
 
-import { EventBus } from '../EventBus';
+import { EventBus } from './EventBus';
 
 export class MainMenu extends Scene
 {
@@ -16,13 +16,29 @@ export class MainMenu extends Scene
 
     create ()
     {
-        this.background = this.add.image(512, 384, 'background');
+        this.background = this.add.image(360, 1000, 'background');
+        this.logo = this.add.image(360, 600, 'logo').setDepth(100).setInteractive();
+        this.logo.on("pointerover",() => {
+            this.tweens.add({
+                targets: this.logo,
+                scale: 1.2,
+                angle: 5,
+                duration: 200,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut'
+            });
+        });
+        this.logo.on("pointerdown", () => this.changeScene() );
+        this.logo.on("pointerout", () => {
+            this.tweens.killTweensOf(this.logo);
+            this.logo.setScale(1);
+            this.logo.setAngle(0);
+        });
 
-        this.logo = this.add.image(512, 300, 'logo').setDepth(100);
-
-        this.title = this.add.text(512, 460, 'Main Menu', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
+        this.title = this.add.text(360, 450, 'タイトル', {
+            fontFamily: 'Arial Black', fontSize: 50, color: '#b60000ff',
+            stroke: '#ff6464ff', strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5).setDepth(100);
 
