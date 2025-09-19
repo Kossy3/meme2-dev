@@ -1,13 +1,15 @@
 import Phaser from 'phaser';
 import TextureKeys from './TextureKeys';
+import { MemeStatus } from "./Types";
 
 export class Meme extends Phaser.GameObjects.Container {
-    private speed: number;
     private dir: Phaser.Math.Vector2;
     private hp: number;
     // private info: Phaser.GameObjects.Text;
     private dead: boolean = false;
     private particleEmitter: Phaser.GameObjects.Particles.ParticleEmitter
+    private status: MemeStatus;
+    private speed: number;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, 0, 0);
@@ -45,9 +47,16 @@ export class Meme extends Phaser.GameObjects.Container {
         return this.dead;
     }
 
-    spawn(positioin: Phaser.Math.Vector2) {
+    spawn(positioin: Phaser.Math.Vector2, status: MemeStatus) {
         this.dead = false;
         this.hp = 1;
+        this.status = status;
+        this.setScale(1);
+        if (this.status.diversity > Phaser.Math.Between(0, 100)) {
+            this.setScale(2);
+            this.hp = 100;
+        }
+        this.speed = Phaser.Math.Between(status.speed * 10 + 50, status.speed * 10 + 100 );
         const targetX = Phaser.Math.Between(260, 460);
         const targetY = 150;
         this.setPosition(positioin.x, positioin.y);
@@ -63,8 +72,7 @@ export class Meme extends Phaser.GameObjects.Container {
         if (this.hp <= 0) {
             // console.log("meme dead")
             this.dead = true;
-            let woolPrice = 1;
-            this.scene.events.emit("pop_wool", this.getWorldPoint(), woolPrice);
+            this.scene.events.emit("pop_wool", this.getWorldPoint(), this.status.price);
             this.setActive(false).setVisible(false);
         }
     }

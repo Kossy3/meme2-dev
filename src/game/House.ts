@@ -76,6 +76,15 @@ export class House extends Phaser.GameObjects.Container {
 
         });
 
+        scene.events.on("change_money", ()=> {
+            this.canUpgrade = wallet.getMoney() >= this.currentHouse.upgradeCost && this.level < House.List.length -1;
+            if (this.canUpgrade) {
+                this.upgradeButton.setTexture("upgrade");
+            } else {
+                this.upgradeButton.setTexture("upgrade2");
+            }
+        })
+
         scene.events.on("upgrade_menu_close", () => {
             this.upgradeButton.setActive(false).setVisible(false);
             this.costText.setActive(false).setVisible(false);
@@ -150,7 +159,7 @@ export class House extends Phaser.GameObjects.Container {
     }
 
     public static readonly List: HouseData[] = [
-        {name: TextureKeys.KEY_HOUSE1, capacity:10, upgradeCost: 30},
+        {name: TextureKeys.KEY_HOUSE1, capacity:1, upgradeCost: 30},
         {name: TextureKeys.KEY_HOUSE2, capacity:2, upgradeCost: 60},
         {name: TextureKeys.KEY_HOUSE3, capacity:3, upgradeCost: 120},
         {name: TextureKeys.KEY_HOUSE4, capacity:4, upgradeCost: 250},

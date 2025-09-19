@@ -1,9 +1,13 @@
 import Phaser from "phaser";
 import { Meme } from "./Meme";
+import { MemeStatus } from "./Types";
 
 export class MemeManager extends Phaser.GameObjects.Container  {
     private memePool: Phaser.GameObjects.Group
-    private activeMeme: Meme[] = []
+    private activeMeme: Meme[] = [];
+    private diversity: number;
+    private speed: number;
+    private price: number;
     
     constructor(scene: Phaser.Scene, memePool: Phaser.GameObjects.Group) {
         super(scene);
@@ -17,9 +21,17 @@ export class MemeManager extends Phaser.GameObjects.Container  {
                 const spawnPos = new Phaser.Math.Vector2(
                     position.x + Phaser.Math.Between(-randomRange, randomRange), 
                     position.y + Phaser.Math.Between(-randomRange, randomRange));
-                meme?.spawn(spawnPos);
+                meme?.spawn(spawnPos, {
+                    diversity: this.diversity,
+                    speed: this.speed,
+                    price: this.price,
+                });
             }
         });
+
+        this.diversity = 1;
+        this.speed = 1;
+        this.price = 1;
 
         // setInterval(()=>{
         //     scene.events.emit("dispatch_meme", {x: 120, y:720}, 10);
@@ -27,6 +39,34 @@ export class MemeManager extends Phaser.GameObjects.Container  {
         //     scene.events.emit("dispatch_meme", {x: 360, y:720}, 10);
         //     scene.events.emit("dispatch_meme", {x: 480, y:720}, 10);
         // }, 100)
+    }
+
+    public getUpgradeCost() :MemeStatus {
+        const twoSign = (num: number): number  => {
+          const factor = 10 ** (1 - Math.floor(Math.log10(Math.abs(num))));
+          return Math.floor(num * factor) / factor;
+        }
+        let upgrades = this.diversity + this.speed + this.price / 3;
+        return {
+            diversity: twoSign(1.5  ** this.diversity * upgrades * 20),
+            speed: twoSign(1.5 ** this.speed * upgrades * 20),
+            price: twoSign(1.5 ** this.price * upgrades * 20),
+        }
+    }
+
+    public getStatus() :MemeStatus {
+        return {
+            diversity: this.diversity,
+            speed: this.speed,
+            price: this.price,
+        }
+    }
+
+    public upgradePrice(status: MemeStatus) {
+        this.price += status.price;
+        this.speed += status.speed;
+        this.diversity  += status.diversity;
+
     }
 
     public getTargetMeme(range: number) : Meme | null {

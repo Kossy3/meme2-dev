@@ -82,11 +82,11 @@ export class Food extends Phaser.GameObjects.Container {
     }
     
     public static List: FoodData[] = [
-        {name: "food1", calorie: 1000, upgradeCost: 30},
-        {name: "food2", calorie: 2, upgradeCost: 50},
-        {name: "food3", calorie: 3, upgradeCost: 80},
-        {name: "food4", calorie: 4, upgradeCost: 120},
-        {name: "food5", calorie: 5, upgradeCost: 180},
+        {name: "food1", calorie: 1, upgradeCost: 5},
+        {name: "food2", calorie: 2, upgradeCost: 30},
+        {name: "food3", calorie: 3, upgradeCost: 60},
+        {name: "food4", calorie: 4, upgradeCost: 70},
+        {name: "food5", calorie: 5, upgradeCost: 90},
         {name: "food6", calorie: 6, upgradeCost: 270},
         {name: "food7", calorie: 7, upgradeCost: 400},
         {name: "food8", calorie: 8, upgradeCost: 600},

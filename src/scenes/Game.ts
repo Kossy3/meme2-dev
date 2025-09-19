@@ -4,15 +4,15 @@ import { Food} from '../game/Food';
 import { Fortress } from '../game/Fortress';
 import TextureKeys from "../game/TextureKeys";
 import { Scene } from 'phaser';
-import {HousePanel} from '../game/UI/HousePanel';
+import {DNAPanel} from '../game/UI/DNAPanel';
 import { House } from '../game/House';
 import { FeedManager } from '../game/FeedManager';
 import {MemeManager} from '../game/MemeManager';
-import { Weapon } from '../game/Weapon';
 import { Bullet } from '../game/Bullet';
 import { Wool } from '../game/Wool';
 import {WoolManager} from '../game/WoolManager';
 import {UpgradeMenu} from '../game/UI/UpgradeMenu';
+import { DNAMenu } from '../game/UI/DNAMenu';
 import { Wallet } from '../game/Wallet';
 import { StageClear } from '../game/UI/StageClear';
 
@@ -24,7 +24,7 @@ export class Game extends Scene
     private memePool: Phaser.GameObjects.Group;
     private day: Phaser.GameObjects.Text;
     private fortress: Fortress;
-    private housePanel: HousePanel;
+    private housePanel: DNAPanel;
 
     constructor ()
     {
@@ -65,7 +65,10 @@ export class Game extends Scene
         this.load.svg("wool", "assets/羊毛.svg");
         this.load.svg("sparkle", "assets/pikapika.svg");
         this.load.svg("wool", "assets/upgrade.svg");
-        this.load.svg("sparkle", "assets/upgrade_moji.svg")
+        this.load.svg("sparkle", "assets/upgrade_moji.svg");
+        this.load.svg("dna", "assets/dna.svg");
+        this.load.svg("dna_mono", "assets/dna_mono.svg");
+        this.load.svg("dna_bg", "assets/dna_bg.svg");
         this.load.image(TextureKeys.KEY_FORTRESS1, "assets/要塞1.svg");
         this.load.image(TextureKeys.KEY_FORTRESS2, "assets/要塞2.svg");
         this.load.image(TextureKeys.KEY_FORTRESS3, "assets/要塞3.svg");
@@ -176,14 +179,15 @@ export class Game extends Scene
             }
         }
 
-        this.housePanel = new HousePanel(this);
+        this.housePanel = new DNAPanel(this, memeManager, wallet);
         this.housePanel.setPosition(720/2, 1280/2 );
         const feedManager = new FeedManager(this, houseList, food as Food);
         const upgradeMenu = new UpgradeMenu(this, 600, 1225);
+        const dnaMenu = new DNAMenu(this, 140, 1225);
 
         const clear = new StageClear(this);
 
-        UIContainer.add([this.housePanel, feedManager, upgradeMenu, wallet, clear]);
+        UIContainer.add([this.housePanel, feedManager, upgradeMenu,dnaMenu, wallet, clear]);
 
 
         this.day = this.add.text(50, 10, ``, {
@@ -194,7 +198,8 @@ export class Game extends Scene
 
         UIContainer.add([this.day]);
 
-        this.events.on("destoroyed", (fortress: Fortress) => {
+        
+        this.events.on("game_clear", (fortress: Fortress) => {
             console.log(fortress)
             this.changeScene();
         });

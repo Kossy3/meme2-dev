@@ -4,7 +4,7 @@ import { FortressData } from './Types';
 import TextureKeys from './TextureKeys';
 import { MemeManager } from './MemeManager';
 
-const bar = 300;
+const bar = 500;
 const h = 20;
 const pad = 6;
 const bary = -80;
@@ -62,11 +62,15 @@ export class Fortress extends Phaser.GameObjects.Container {
             this.destroyed = true;
             this.playClearEffect();
             this.scene.events.emit("stage_clear", (this));
-            if (this.level < Fortress.List.length){
+            if (this.level < Fortress.List.length-1){
                 this.level ++;
                 //this.build();
             } else {
-                this.scene.events.emit("destoroyed", (this));
+                this.scene.registry.set("clear", true);
+                this.scene.time.delayedCall(1500, () => {
+                    this.scene.events.emit("game_clear", (this));
+                });
+                
             }
         }
     }
@@ -86,7 +90,7 @@ export class Fortress extends Phaser.GameObjects.Container {
         
     }
 
-    playClearEffect() {
+    private playClearEffect() {
         // カメラシェイク
         this.scene.cameras.main.shake(800, 0.02);
 
@@ -103,20 +107,25 @@ export class Fortress extends Phaser.GameObjects.Container {
                     
                 }
                 this.weapons = [];
-
-                this.setAlpha (1);
-                this.build();
-                const cy = this.y;
-                this.setPosition(this.x, -300);
-                this.scene.tweens.add({
-                    targets: this,
-                    y: cy,
-                    duration: 1500,
-                    ease: "Bounce.easeOut",
-                    onComplete: () => {this.destroyed = false;}
-                });
-                
+                console.log(!this.scene.registry.get("clear"));
+                if (!this.scene.registry.get("clear")) {
+                    this.build();
+                    this.playStartEffect()
+                }
             }
+        });
+    }
+
+    private playStartEffect () {
+        this.setAlpha (1);
+        const cy = this.y;
+        this.setPosition(this.x, -300);
+        this.scene.tweens.add({
+            targets: this,
+            y: cy,
+            duration: 1500,
+            ease: "Bounce.easeOut",
+            onComplete: () => {this.destroyed = false;}
         });
     }
 
@@ -156,7 +165,7 @@ export class Fortress extends Phaser.GameObjects.Container {
         },
         {
             name: TextureKeys.KEY_FORTRESS2,
-            hp: 30,
+            hp: 20,
             weapon:[
                 {x:64, y:0, name:TextureKeys.KEY_WEAPON1, cooldown:1.5},
                 {x:-64, y:0, name:TextureKeys.KEY_WEAPON1, cooldown:1},
@@ -164,7 +173,7 @@ export class Fortress extends Phaser.GameObjects.Container {
         },
         {
             name: TextureKeys.KEY_FORTRESS3,
-            hp: 100,
+            hp: 30,
             weapon:[
                 {x:80, y:0, name:TextureKeys.KEY_WEAPON1, cooldown:1},
                 {x:0, y:0, name:TextureKeys.KEY_WEAPON1, cooldown:1},
@@ -173,7 +182,7 @@ export class Fortress extends Phaser.GameObjects.Container {
         },
         {
             name: TextureKeys.KEY_FORTRESS4,
-            hp: 30,
+            hp: 40,
            weapon:[
                 {x:75, y:0, name:TextureKeys.KEY_WEAPON1, cooldown:0.7},
                 {x:204, y:0, name:TextureKeys.KEY_WEAPON1, cooldown:0.7},
@@ -183,14 +192,14 @@ export class Fortress extends Phaser.GameObjects.Container {
         },
         {
             name: TextureKeys.KEY_FORTRESS1,
-            hp: 30,
+            hp: 50,
             weapon:[
                 {x:0, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1}
             ]
         },
         {
             name: TextureKeys.KEY_FORTRESS2,
-            hp: 1000,
+            hp: 60,
             weapon:[
                 {x:64, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
                 {x:-64, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1}
@@ -198,32 +207,48 @@ export class Fortress extends Phaser.GameObjects.Container {
         },
         {
             name: TextureKeys.KEY_FORTRESS3,
-            hp: 1000,
+            hp: 70,
             weapon:[
                 {x:80, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
                 {x:0, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
-                {x:-80, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:-80, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1}
             ]
         },
         {
-            name: TextureKeys.KEY_FORTRESS1,
-            hp: 1000,
+            name: TextureKeys.KEY_FORTRESS4,
+            hp: 80,
             weapon:[
-                {x:360, y:150, name:TextureKeys.KEY_WEAPON2, cooldown:1}
+                {x:75, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:204, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:-75, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:-204, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1}
             ]
         },
         {
-            name: TextureKeys.KEY_FORTRESS1,
-            hp: 1000,
+            name: TextureKeys.KEY_FORTRESS5,
+            hp: 90,
             weapon:[
-                {x:360, y:150, name:TextureKeys.KEY_WEAPON2, cooldown:1}
+                {x:264, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:154, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:0, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:-154, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:-264, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1}
             ]
         },
         {
-            name: TextureKeys.KEY_FORTRESS1,
-            hp: 1000,
+            name: TextureKeys.KEY_FORTRESS5,
+            hp: 100,
             weapon:[
-                {x:360, y:150, name:TextureKeys.KEY_WEAPON2, cooldown:1}
+                {x:264, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:154, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:0, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:-154, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:-264, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:264, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:154, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:0, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:-154, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1},
+                {x:-264, y:0, name:TextureKeys.KEY_WEAPON2, cooldown:0.1}
             ]
         },
     ]

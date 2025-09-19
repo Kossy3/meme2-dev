@@ -53,6 +53,7 @@ export class Wallet extends Phaser.GameObjects.Container {
       (async()=>this.particleEmitter.explode())();
       this.money += price;
       this.moneyText.setText(`$${this.money}`);
+      this.scene.events.emit("change_money");
     }
 
     public getMoney() : number {
@@ -62,6 +63,7 @@ export class Wallet extends Phaser.GameObjects.Container {
     public useMoney(price: number) {
         this.money -= price;
         this.moneyText.setText(`$${this.money}`);
+        this.scene.events.emit("change_money");
     }
 
 }

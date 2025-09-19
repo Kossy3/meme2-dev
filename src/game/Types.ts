@@ -24,3 +24,9 @@ export type FortressData = {
     hp: number;
     weapon: WeaponData[]
 }
+
+export type MemeStatus = {
+    diversity: number;
+    speed: number;
+    price: number;
+}
